@@ -1,0 +1,46 @@
+name: e2e
+
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.X]
+
+    steps:
+      - name: レポジトリのチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Node.js ${{ matrix.node-version }} セットアップ
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+
+      - name: パッケージインストール
+        run: yarn install
+
+      - name: firebase-toolsをインストール
+        run: yarn add firebase-tools
+
+      - name: エミュレーターの起動
+        run: yarn emulator:start &
+
+      - name: エミュレーターの起動待機...
+        run: sleep 10
+
+      - name: テスト実行
+        run: yarn test
+
+      - name: エミュレーターのレポートの待機...
+        run: sleep 10
+
+      - name: caverage request
+        id: coverageRequest
+        uses: SonicGarden/firebase-rules-reqport-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          report-url: 'http://127.0.0.1:8080/emulartor/v1/projects/test-firebase'
