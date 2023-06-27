@@ -3,13 +3,23 @@ import { beforeEach, describe, it } from 'vitest'
 import firebase from 'firebase/compat/app'
 import { getTestEnv, setCollection } from '@/../test/rules/firestore/utils'
 import { userFactory } from '@/../test/factories/user'
+import { messageFactory } from '@/../test/factories/message'
 
 const user = userFactory.build({ id: 'user-id' })
 const other = userFactory.build({ id: 'other-id' })
-const users = [ user, other ]
+const users = [user, other]
+const userMessage = messageFactory.build({
+  id: 'user-message-id',
+  senderId: user.id
+})
+const otherMessage = messageFactory.build({
+  id: 'other-message-id',
+  senderId: other.id
+})
+const messages = [userMessage, otherMessage]
 
-export const usersTest = () => {
-  describe('user', () => {
+export const messageTest = () => {
+  describe('message', () => {
     let env: RulesTestEnvironment
 
     beforeEach(async () => {
@@ -17,10 +27,12 @@ export const usersTest = () => {
       await env.withSecurityRulesDisabled(async (context) => {
         const adminDb = context.firestore()
         await setCollection(adminDb.collection('users'), users)
+        await setCollection(adminDb.collection('messages'), messages)
       })
     })
 
     describe('未認証の場合', () => {
+
       let db: firebase.firestore.Firestore
 
       beforeEach(() => {
@@ -28,28 +40,28 @@ export const usersTest = () => {
       })
 
       it('読み込みできない(get)', async () => {
-        const ref = db.collection('users').doc(other.id)
+        const ref = db.collection('messages').doc(otherMessage.id)
         await assertFails(ref.get())
       })
 
       it('読み込みできない(list)', async () => {
-        const ref = db.collection('users')
+        const ref = db.collection('messages')
         await assertFails(ref.get())
       })
 
       it('作成できない', async () => {
-        const newUser =  userFactory.build()
-        const ref = db.collection('users')
-        await assertFails(ref.add(newUser))
+        const newMessage = messageFactory.build()
+        const ref = db.collection('messages')
+        await assertFails(ref.add(newMessage))
       })
 
       it('更新できない', async () => {
-        const ref = db.collection('users').doc(other.id)
-        await assertFails(ref.update({ name: '違う名前' }))
+        const ref = db.collection('messages').doc(otherMessage.id)
+        await assertFails(ref.update({ content: '違う内容' }))
       })
 
       it('削除できない', async () => {
-        const ref = db.collection('users').doc(other.id)
+        const ref = db.collection('messages').doc(otherMessage.id)
         await assertFails(ref.delete())
       })
     })
@@ -57,7 +69,7 @@ export const usersTest = () => {
     describe('認証済みの場合', () => {
       it('一覧を読み込みできる(list)', async () => {
         const db = env.authenticatedContext(user.id).firestore()
-        const ref = db.collection('users')
+        const ref = db.collection('messages')
         await assertSucceeds(ref.get())
       })
 
@@ -69,24 +81,25 @@ export const usersTest = () => {
         })
 
         it('読み込みできる(get)', async () => {
-          const ref = db.collection('users').doc(user.id)
+          const ref = db.collection('messages').doc(userMessage.id)
           await assertSucceeds(ref.get())
         })
 
         it('作成できる', async () => {
-          const newUser = userFactory.build()
-          const db = env.authenticatedContext(newUser.id).firestore()
-          const ref = db.collection('users')
-          await assertSucceeds(ref.doc(newUser.id).set(newUser))
+          const newMessage = messageFactory.build({
+            senderId: user.id
+          })
+          const ref = db.collection('messages')
+          await assertSucceeds(ref.doc(newMessage.id).set(newMessage))
         })
 
         it('更新できる', async () => {
-          const ref = db.collection('users').doc(user.id)
-          await assertSucceeds(ref.update({ name: '違う名前' }))
+          const ref = db.collection('messages').doc(userMessage.id)
+          await assertSucceeds(ref.update({ content: '違う内容' }))
         })
 
         it('削除できる', async () => {
-          const ref = db.collection('users').doc(user.id)
+          const ref = db.collection('messages').doc(userMessage.id)
           await assertSucceeds(ref.delete())
         })
       })
@@ -99,26 +112,27 @@ export const usersTest = () => {
         })
 
         it('読み込みできる(get)', async () => {
-          const ref = db.collection('users').doc(other.id)
+          const ref = db.collection('messages').doc(otherMessage.id)
           await assertSucceeds(ref.get())
         })
 
         it('作成できない', async () => {
-          const newUser = userFactory.build()
-          const ref = db.collection('users')
-          await assertFails(ref.doc(newUser.id).set(newUser))
+          const newMessage = messageFactory.build({ senderId: other.id })
+          const ref = db.collection('messages')
+          await assertFails(ref.doc(newMessage.id).set(newMessage))
         })
 
         it('更新できない', async () => {
-          const ref = db.collection('users').doc(other.id)
-          await assertFails(ref.update({ name: '違う名前' }))
+          const ref = db.collection('messages').doc(otherMessage.id)
+          await assertFails(ref.update({ content: '違う内容' }))
         })
 
         it('削除できない', async () => {
-          const ref = db.collection('users').doc(other.id)
+          const ref = db.collection('messages').doc(otherMessage.id)
           await assertFails(ref.delete())
         })
       })
     })
   })
 }
+

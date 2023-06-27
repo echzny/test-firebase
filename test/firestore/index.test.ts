@@ -1,6 +1,7 @@
 import { initializeTestEnvironment, getTestEnv } from "../rules/firestore/utils"
 import { afterAll, afterEach, beforeAll, describe } from 'vitest'
-import { usersTest } from '../rules/firestore/collections/user'
+import { usersTest } from '@/../test/rules/firestore/collections/user'
+import { messageTest } from '@/../test/rules/firestore/collections/message'
 
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:4000'
 
@@ -18,4 +19,5 @@ describe('firestore.rules', () => {
   })
 
   usersTest()
+  messageTest()
 })
