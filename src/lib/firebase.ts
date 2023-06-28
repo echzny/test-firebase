@@ -6,8 +6,16 @@ import {
   QueryDocumentSnapshot,
   SnapshotOptions,
   FirestoreDataConverter,
-  PartialWithFieldValue
+  PartialWithFieldValue,
+  serverTimestamp as _serverTimestamp
 } from 'firebase/firestore'
+import {
+  User,
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut as _signOut
+} from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -36,4 +44,20 @@ const getConverter = <T extends DocumentData>(): FirestoreDataConverter<WithId<T
   }
 })
 
-export { Timestamp, getConverter }
+const signInGoogleWithPopup = async () => {
+  const provider = new GoogleAuthProvider()
+  return signInWithPopup(getAuth(), provider)
+}
+
+const signOut = async () => _signOut(getAuth())
+
+const serverTimestamp = _serverTimestamp as unknown as () => Timestamp
+
+export type { User }
+export {
+  Timestamp,
+  getConverter,
+  serverTimestamp,
+  signInGoogleWithPopup,
+  signOut
+}
