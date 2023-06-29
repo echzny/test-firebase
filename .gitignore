@@ -1,4 +1,5 @@
 /.env
+vite.config.ts.timestamp*
 
 # Logs
 logs
