@@ -40,7 +40,7 @@ jobs:
 
       - name: caverage request
         id: coverageRequest
-        uses: SonicGarden/firebase-rules-reqport-action@v1.1
+        uses: SonicGarden/firestore-rules-reqport-action@v1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           report-url: 'http://127.0.0.1:8080/emulartor/v1/projects/test-firebase'
