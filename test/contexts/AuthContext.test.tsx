@@ -52,13 +52,13 @@ vi.mock('@/lib/user', () => {
   }
 })
 
-const signInGoogleWithPoupMock = vi.fn()
+const signInGoogleWithPopupMock = vi.fn()
 const signOutMock = vi.fn()
 vi.mock('@/lib/firebase', async () => {
   const firebase = await vi.importActual<object>('@/lib/firebase')
   return {
     ...firebase,
-    signInGoogleWithPoup: signInGoogleWithPoupMock,
+    signInGoogleWithPopup: signInGoogleWithPopupMock,
     signOut: signOutMock
   }
 })
@@ -74,7 +74,7 @@ describe('useAuth', async () => {
   it('初めてのログインの場合、ユーザー情報が登録される', async () => {
     const { result } = renderHook(() => useAuth())
 
-    signInGoogleWithPoupMock.mockResolvedValue({
+    signInGoogleWithPopupMock.mockResolvedValue({
       user: {
         uid: 'test-uid',
         displayName: 'てすたろう',
@@ -86,13 +86,35 @@ describe('useAuth', async () => {
       await result.current.signInWithGoogle()
     })
 
+    expect(addUserMock).toBeCalledWith({
+      uid: 'test-uid',
+      displayName: 'てすたろう',
+      photoURL: null
+    })
+  })
+
+  it('二回目以降のログインの場合、ユーザー情報は登録されない', async () => {
+    const { result } = renderHook(() => useAuth())
+
+    signInGoogleWithPopupMock.mockResolvedValue({
+      user: {
+        uid: 'test-uid',
+        displayName: 'てすたろう',
+        photoURL: null
+      }
+    })
+    getUserMock.mockResolvedValue({ isExist: true })
+    await actHook(async () => {
+      await result.current.signInWithGoogle()
+    })
+
     expect(addUserMock).not.toBeCalled()
   })
 
   it('処理中にエラーが発生した場合はログアウトされる', async () => {
     const { result } = renderHook(() => useAuth())
 
-    signInGoogleWithPoupMock.mockResolvedValue({
+    signInGoogleWithPopupMock.mockResolvedValue({
       user: {
         uid: 'test-uid',
         displayName: 'てすたろう',
