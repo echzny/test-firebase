@@ -1,26 +1,8 @@
 {
   "functions": [
     {
-      "source": "functions",
-      "codebase": "default"
-    },
-    {
-      "source": "test-firebase",
-      "codebase": "test-firebase",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
-    },
-    {
       "source": "codebase",
-      "codebase": "codebase",
+      "codebase": "default",
       "ignore": [
         "node_modules",
         ".git",
@@ -43,12 +25,6 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
     ]
   },
   "storage": {

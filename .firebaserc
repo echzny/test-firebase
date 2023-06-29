@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "test-firebase-77890"
-  }
+    "default": "test-firebase-d2b63",
+    "test-firebase": "test-firebase-d2b63"
+  },
+  "targets": {},
+  "etags": {}
 }
