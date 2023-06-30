@@ -3,9 +3,10 @@ import { ReactNode, createContext, useContext, useCallback } from 'react'
 import { User, signInGoogleWithPopup, signOut } from '@/lib/firebase'
 import { getUser, addUser } from '@/lib/user'
 import { useAuthState } from '@/hooks/useAuthState'
+import { LoginScreen } from '@/components/LoginScreen'
 
 type AuthContextValue = {
-  currentUser: User | undefined | null
+  currentUser: User | null
 }
 
 export const AuthContext = createContext<AuthContextValue>({
@@ -19,6 +20,8 @@ export const AuthProvider = ({
   children: ReactNode
 }) => {
   const [currentUser] = useAuthState()
+
+  if (!currentUser) return <LoginScreen />
 
   return (
     <AuthContext.Provider value={{ currentUser }}>

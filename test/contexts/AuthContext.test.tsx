@@ -41,6 +41,24 @@ describe('AuthProvider', async () => {
       ).toBeTruthy()
     )
   })
+
+  it('未認証の場合、ログイン画面が表示される', async () => {
+    useAuthStateMock.mockReturnValue([null, false, undefined])
+    render(<TestComponent />)
+    waitFor(() =>
+      expect(
+        screen.getByText('ログインしてください')
+      ).toBeTruthy()
+    )
+  })
+
+  it.only('ローディング中の場合、ローディング画面が表示される', async () => {
+    useAuthStateMock.mockReturnValue([null, true, undefined])
+    render(<TestComponent />)
+    waitFor(() =>
+      expect(screen.getByText('loading...')).toBeTruthy()
+    )
+  })
 })
 
 const getUserMock = vi.fn()

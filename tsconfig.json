@@ -25,7 +25,7 @@
       "@/*": ["*"]
     }
   },
-  "include": ["src", "test"],
+  "include": ["src", "test", "./vitest.setup.ts"],
   "types": ["vitest/globals"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
