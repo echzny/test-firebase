@@ -30,7 +30,7 @@ describe('AuthProvider', async () => {
     cleanup()
   })
 
-  it('コンテキストデータが取得できる', async () => {
+  it('認証済みの場合、コンシューマーコンポーネントでコンテキストデータが取得できる', async () => {
     useAuthStateMock.mockReturnValueOnce([
       { uid: 'test-user-id', displayName: 'てすたろう' } as User, true, undefined
     ])
@@ -52,7 +52,7 @@ describe('AuthProvider', async () => {
     )
   })
 
-  it.only('ローディング中の場合、ローディング画面が表示される', async () => {
+  it('ローディング中の場合、ローディング画面が表示される', async () => {
     useAuthStateMock.mockReturnValue([null, true, undefined])
     render(<TestComponent />)
     waitFor(() =>
