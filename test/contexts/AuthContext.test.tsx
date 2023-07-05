@@ -30,7 +30,7 @@ describe('AuthProvider', async () => {
     cleanup()
   })
 
-  it('コンテキストデータが取得できる', async () => {
+  it('認証済みの場合、コンシューマーコンポーネントでコンテキストデータが取得できる', async () => {
     useAuthStateMock.mockReturnValueOnce([
       { uid: 'test-user-id', displayName: 'てすたろう' } as User, true, undefined
     ])
@@ -39,6 +39,24 @@ describe('AuthProvider', async () => {
       expect(
         screen.getByText('てすたろうでログインできました')
       ).toBeTruthy()
+    )
+  })
+
+  it('未認証の場合、ログイン画面が表示される', async () => {
+    useAuthStateMock.mockReturnValue([null, false, undefined])
+    render(<TestComponent />)
+    waitFor(() =>
+      expect(
+        screen.getByText('ログインしてください')
+      ).toBeTruthy()
+    )
+  })
+
+  it('ローディング中の場合、ローディング画面が表示される', async () => {
+    useAuthStateMock.mockReturnValue([null, true, undefined])
+    render(<TestComponent />)
+    waitFor(() =>
+      expect(screen.getByText('loading...')).toBeTruthy()
     )
   })
 })
