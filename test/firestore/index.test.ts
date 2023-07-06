@@ -1,4 +1,4 @@
-import { initializeTestEnvironment, getTestEnv } from "../rules/firestore/utils"
+import { initializeTestEnvironment, getTestEnv } from "../utils"
 import { afterAll, afterEach, beforeAll, describe } from 'vitest'
 import { usersTest } from '@/../test/rules/firestore/collections/user'
 import { messageTest } from '@/../test/rules/firestore/collections/message'

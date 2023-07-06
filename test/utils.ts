@@ -8,9 +8,9 @@ import { getConverter, WithId } from '@/lib/firebase'
 
 let testEnv: RulesTestEnvironment
 
-export const initializeTestEnvironment = async () => {
+export const initializeTestEnvironment = async (projectId: string | undefined) => {
   testEnv = await _initializeTestEnvironment({
-    projectId: 'test-firebase',
+    projectId: projectId ? projectId : 'test-firebase',
     firestore: {
       host: "127.0.0.1",
       port: 8080,

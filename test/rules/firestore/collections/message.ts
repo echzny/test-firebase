@@ -1,7 +1,7 @@
 import { assertSucceeds, assertFails, RulesTestEnvironment } from '@firebase/rules-unit-testing'
 import { beforeEach, describe, it } from 'vitest'
 import firebase from 'firebase/compat/app'
-import { getTestEnv, setCollection } from '@/../test/rules/firestore/utils'
+import { getTestEnv, setCollection } from '../../../utils'
 import { userFactory } from '@/../test/factories/user'
 import { messageFactory } from '@/../test/factories/message'
 
