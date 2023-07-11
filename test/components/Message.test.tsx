@@ -1,6 +1,7 @@
+// vitest-environment node
 /* eslint-disable react/react-in-jsx-scope */
 import { render, cleanup, screen, waitFor } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { vi } from 'vitest'
 import { userFactory } from '@/../test/factories/user'
 import { messageFactory } from '@/../test/factories/message'
 import { Timestamp } from 'firebase/firestore'

@@ -1,8 +1,9 @@
+// vitest-environment node
 /* eslint-disable react/react-in-jsx-scope */
 import { render, cleanup, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
 import { userFactory } from '@/../test/factories/user'
 import { messageFactory } from '@/../test/factories/message'
+import { vi } from 'vitest'
 
 const useCollectionDataMock = vi.fn()
 vi.mock('@/hooks/useCollectionData', () => {
