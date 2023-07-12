@@ -19,6 +19,13 @@ vi.mock('@/contexts/UsersContext', () => {
   }
 })
 
+const useBlobMock = vi.fn()
+vi.mock('@/hooks/useBlob', () => {
+  return {
+    useBlob: useBlobMock
+  }
+})
+
 describe('Messages', async () => {
   const { Messages } = await import('@/components/Messages')
 
@@ -45,6 +52,8 @@ describe('Messages', async () => {
       senderId: 'test-user-uid'
     })
     useCollectionDataMock.mockReturnValue([[message, message2], false, undefined, undefined])
+
+    useBlobMock.mockReturnValue({ url: 'message-image-url' })
 
     const user = userFactory.build({
       id: 'test-user-uid',

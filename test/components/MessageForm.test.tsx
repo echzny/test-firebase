@@ -29,6 +29,11 @@ describe('MessageForm', async () => {
     expect(screen.getByLabelText('content-input')).toBeDefined()
   })
 
+  it('画像入力欄が表示される', () => {
+    act(() => render(<MessageForm />))
+    expect(screen.getByLabelText('image-input')).toBeDefined()
+  })
+
   it('送信ボタンが表示される', () => {
     act(() => render(<MessageForm />))
     expect(screen.getByText('送信')).toBeDefined()
@@ -49,12 +54,29 @@ describe('MessageForm', async () => {
     expect(addMessageMock).toBeCalled()
   })
 
-  it('送信完了後、メッセージ入力欄がクリアされる', async () => {
+  it('画像添付の場合は画像も指定してメッセージ投稿処理が呼ばれる', async () => {
     act(() => render(<MessageForm />))
-    const input = screen.getByLabelText<HTMLInputElement>('content-input')
-    await act(() => userEvent.type(input, 'てすとだよ'))
+    const contentInput = screen.getByLabelText<HTMLInputElement>('content-input')
+    await act(() => userEvent.type(contentInput, 'てすとだよ'))
+    const imageInput = screen.getByLabelText<HTMLInputElement>('image-input')
+    const file = new File([], 'image.png', { type: 'image/png' })
+    await act(() => userEvent.upload(imageInput, file))
+    await act(() => screen.getByText<HTMLButtonElement>('送信').dispatchEvent(new MouseEvent('click', { bubbles: true })))
+    expect(addMessageMock).toBeCalledWith('てすとだよ', file, 'test-user-uid')
+  })
+
+  it('送信完了後、メッセージ、画像入力欄がクリアされる', async () => {
+    act(() => render(<MessageForm />))
+    const contentInput = screen.getByLabelText<HTMLInputElement>('content-input')
+    await act(() => userEvent.type(contentInput, 'てすとだよ'))
+    const imageInput = screen.getByLabelText<HTMLInputElement>('image-input')
+    const file = new File([], 'image.png', { type: 'image/png' })
+    await act(() => userEvent.upload(imageInput, file))
     const button = screen.getByText<HTMLButtonElement>('送信')
     await act(() => act(() => button.dispatchEvent(new MouseEvent('click', { bubbles: true }))))
-    await waitFor(() => expect(input).toHaveValue(''))
+    await waitFor(() => {
+      expect(contentInput).toHaveValue('')
+      expect(imageInput.files?.[0]).toBeUndefined()
+    })
   })
 })
