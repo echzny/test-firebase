@@ -1,8 +1,9 @@
+// vitest-environment node
 /* eslint-disable react/react-in-jsx-scope */
 import { render, cleanup, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
 import { userFactory } from '@/../test/factories/user'
 import { messageFactory } from '@/../test/factories/message'
+import { vi } from 'vitest'
 
 const useCollectionDataMock = vi.fn()
 vi.mock('@/hooks/useCollectionData', () => {
@@ -15,6 +16,13 @@ const useUsersMock = vi.fn()
 vi.mock('@/contexts/UsersContext', () => {
   return {
     useUsers: useUsersMock
+  }
+})
+
+const useBlobMock = vi.fn()
+vi.mock('@/hooks/useBlob', () => {
+  return {
+    useBlob: useBlobMock
   }
 })
 
@@ -44,6 +52,8 @@ describe('Messages', async () => {
       senderId: 'test-user-uid'
     })
     useCollectionDataMock.mockReturnValue([[message, message2], false, undefined, undefined])
+
+    useBlobMock.mockReturnValue({ url: 'message-image-url' })
 
     const user = userFactory.build({
       id: 'test-user-uid',

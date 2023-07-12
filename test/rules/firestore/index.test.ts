@@ -1,13 +1,11 @@
-import { initializeTestEnvironment, getTestEnv } from "../utils"
-import { afterAll, afterEach, beforeAll, describe } from 'vitest'
+// vitest-environment node
+import { initializeTestEnvironment, getTestEnv } from "../../utils"
 import { usersTest } from '@/../test/rules/firestore/collections/user'
 import { messageTest } from '@/../test/rules/firestore/collections/message'
 
-process.env.FIRESTORE_EMULATOR_HOST = 'localhost:4000'
-
 describe('firestore.rules', () => {
   beforeAll(async () => {
-    await initializeTestEnvironment()
+    await initializeTestEnvironment('testable-firebase-sample-chat-firestore-rules-test')
   })
 
   afterAll(async () => {

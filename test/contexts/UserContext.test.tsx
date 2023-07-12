@@ -1,8 +1,9 @@
+// vitest-environment node
 /* eslint-disable react/react-in-jsx-scope */
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook } from '@testing-library/react'
 import { useUsers, UsersProvider } from '@/contexts/UsersContext'
 import { ReactNode } from 'react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { vi } from 'vitest'
 
 describe('useUsers', () => {
   const wrapper = ({ children }: { children: ReactNode }) => (

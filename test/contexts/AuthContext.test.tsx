@@ -1,8 +1,8 @@
+// vitest-environment node
 /* eslint-disable react/react-in-jsx-scope */
-import { render, cleanup, screen, waitFor } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { act as actHook, cleanup, cleanup as cleanupHook, render, renderHook, screen, waitFor } from '@testing-library/react'
 import type { User } from 'firebase/auth'
-import { renderHook, act as actHook, cleanup as cleanupHook } from '@testing-library/react-hooks'
+import { vi } from 'vitest'
 
 const useAuthStateMock = vi.fn()
 vi.mock('@/hooks/useAuthState', () => {
