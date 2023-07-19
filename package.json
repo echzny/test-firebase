@@ -6,11 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:test": "yarn build --mode test",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "deploy": "yarn build && firebase deploy --except functions",
     "test": "vitest run --dir test",
-    "emulators:start": "firebase emulators:start --only auth,firestore,storage"
+    "test:e2e": "yarn cypress run",
+    "emulators:start": "firebase emulators:start --only hosting,auth,firestore,storage",
+    "emulators:test": "firebase emulators:exec --only firestore,storage 'yarn test",
+    "emulators:e2e": "yarn build:test && firebase emulators:exec --only hosting,auth,firestore,storage 'yarn test:e2e'"
   },
   "dependencies": {
     "date-fns": "^2.30.0",
@@ -32,12 +36,15 @@
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.60.0",
     "@vitejs/plugin-react": "^4.0.0",
+    "cypress": "^12.17.1",
+    "cypress-firebase": "^3.0.1",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "firebase": "^10.0.0",
+    "firebase-admin": "^11.10.1",
     "fishery": "^2.2.2",
     "jsdom": "^22.1.0",
     "prettier": "^2.8.8",

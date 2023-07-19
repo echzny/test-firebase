@@ -1,4 +1,4 @@
-import { getFirestore, collection, doc, getDoc, setDoc } from "firebase/firestore"
+import { getFirestore, collection, doc, setDoc } from "firebase/firestore"
 import { getConverter, serverTimestamp } from "@/lib/firebase"
 import type { UserSecretsDocumentData } from "@/shared/types/userSecrets"
 
