@@ -1,7 +1,7 @@
 import { getFirestore, collection, query, orderBy, doc, setDoc, DocumentReference } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes } from 'firebase/storage'
 import { getConverter, serverTimestamp } from '@/lib/firebase'
-import type { MessageDocumentData } from '@/types/message'
+import type { MessageDocumentData } from '@/shared/types/message'
 
 export const collectionName = 'messages'
 

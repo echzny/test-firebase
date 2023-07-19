@@ -70,14 +70,23 @@ vi.mock('@/lib/user', () => {
   }
 })
 
+const setUserSecretMock = vi.fn()
+vi.mock('@/lib/userSecret', () => {
+  return {
+    setUserSecret: setUserSecretMock
+  }
+})
+
 const signInGoogleWithPopupMock = vi.fn()
 const signOutMock = vi.fn()
+const getFcmTokenMock = vi.fn()
 vi.mock('@/lib/firebase', async () => {
   const firebase = await vi.importActual<object>('@/lib/firebase')
   return {
     ...firebase,
     signInGoogleWithPopup: signInGoogleWithPopupMock,
-    signOut: signOutMock
+    signOut: signOutMock,
+    getFcmToken: getFcmTokenMock
   }
 })
 
@@ -89,57 +98,73 @@ describe('useAuth', async () => {
     await cleanupHook()
   })
 
-  it('初めてのログインの場合、ユーザー情報が登録される', async () => {
-    const { result } = renderHook(() => useAuth())
-
-    signInGoogleWithPopupMock.mockResolvedValue({
-      user: {
-        uid: 'test-uid',
-        displayName: 'てすたろう',
-        photoURL: null
-      }
-    })
-    getUserMock.mockResolvedValue({ isExist: false })
-    await actHook(async () => {
-      await result.current.signInWithGoogle()
+  describe('初めてのログインの場合', () => {
+    beforeEach(() => {
+      signInGoogleWithPopupMock.mockResolvedValue({
+        user: { uid: 'test-uid', displayName: 'てすたろう', photoURL: null },
+      })
+      getUserMock.mockResolvedValue({ isExist: false })
+      getFcmTokenMock.mockResolvedValue('test-token')
     })
 
-    expect(addUserMock).toBeCalledWith({
-      uid: 'test-uid',
-      displayName: 'てすたろう',
-      photoURL: null
+    it('ユーザ情報が登録される', async () => {
+      const { result } = renderHook(() => useAuth())
+
+      await actHook(async () => {
+        await result.current.signInWithGoogle()
+      })
+
+      expect(addUserMock).toBeCalledWith({ uid: 'test-uid', displayName: 'てすたろう', photoURL: null })
+    })
+
+    it('fcmTokenが登録される', async () => {
+      const { result } = renderHook(() => useAuth())
+
+      await actHook(async () => {
+        await result.current.signInWithGoogle()
+      })
+
+      expect(setUserSecretMock).toBeCalledWith('test-uid', { fcmToken: 'test-token' })
     })
   })
 
-  it('二回目以降のログインの場合、ユーザー情報は登録されない', async () => {
-    const { result } = renderHook(() => useAuth())
+  describe('二回目以降のログインの場合', () => {
+    beforeEach(() => {
+      signInGoogleWithPopupMock.mockResolvedValue({
+        user: { uid: 'test-uid', displayName: 'てすたろう', photoURL: null },
+      });
+      getUserMock.mockResolvedValue({ isExist: true });
+      getFcmTokenMock.mockResolvedValue('test-token');
+    });
 
-    signInGoogleWithPopupMock.mockResolvedValue({
-      user: {
-        uid: 'test-uid',
-        displayName: 'てすたろう',
-        photoURL: null
-      }
-    })
-    getUserMock.mockResolvedValue({ isExist: true })
-    await actHook(async () => {
-      await result.current.signInWithGoogle()
+    it('ユーザ情報は登録されない', async () => {
+      const { result } = renderHook(() => useAuth())
+
+      await actHook(async () => {
+        await result.current.signInWithGoogle()
+      })
+
+      expect(addUserMock).not.toBeCalled()
     })
 
-    expect(addUserMock).not.toBeCalled()
+    it('fcmTokenが更新される', async () => {
+      const { result } = renderHook(() => useAuth())
+
+      await actHook(async () => {
+        await result.current.signInWithGoogle()
+      })
+
+      expect(setUserSecretMock).toBeCalledWith('test-uid', { fcmToken: 'test-token' })
+    })
   })
 
   it('処理中にエラーが発生した場合はログアウトされる', async () => {
     const { result } = renderHook(() => useAuth())
 
     signInGoogleWithPopupMock.mockResolvedValue({
-      user: {
-        uid: 'test-uid',
-        displayName: 'てすたろう',
-        photoURL: null
-      }
+      user: { uid: 'test-uid', displayName: 'てすたろう', photoURL: null },
     })
-    getUserMock.mockRejectedValue('error')
+    getUserMock.mockRejectedValue('error');
     await actHook(async () => {
       await result.current.signInWithGoogle()
     })
