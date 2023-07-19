@@ -1,4 +1,5 @@
 // vitest-environment node
+import { vi } from 'vitest'
 import { RulesTestEnvironment } from "@firebase/rules-unit-testing"
 import { getTestEnv, setCollection } from '@/../test/utils'
 

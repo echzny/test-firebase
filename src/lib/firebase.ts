@@ -7,14 +7,17 @@ import {
   SnapshotOptions,
   FirestoreDataConverter,
   PartialWithFieldValue,
-  serverTimestamp as _serverTimestamp
+  serverTimestamp as _serverTimestamp,
+  initializeFirestore,
+  connectFirestoreEmulator
 } from 'firebase/firestore'
 import {
   User,
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
-  signOut as _signOut
+  signOut as _signOut,
+  connectAuthEmulator
 } from 'firebase/auth'
 import { getMessaging, getToken } from 'firebase/messaging'
 
@@ -27,7 +30,16 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 }
 
-initializeApp(firebaseConfig)
+const app = initializeApp(firebaseConfig)
+
+if (import.meta.env.VITE_EMULATORS == 'true') {
+  console.info('USE EMULATORS...')
+  connectAuthEmulator(getAuth(), 'http://127.0.0.1:9099')
+  const firestore = initializeFirestore(app, {
+    experimentalForceLongPolling: true
+  })
+  connectFirestoreEmulator(firestore, 'localhost', 8080)
+}
 
 export type WithId<T> = T & { id: string }
 
