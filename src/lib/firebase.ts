@@ -16,6 +16,7 @@ import {
   GoogleAuthProvider,
   signOut as _signOut
 } from 'firebase/auth'
+import { getMessaging, getToken } from 'firebase/messaging'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -53,11 +54,17 @@ const signOut = async () => _signOut(getAuth())
 
 const serverTimestamp = _serverTimestamp as unknown as () => Timestamp
 
+const getFcmToken = async () => getToken(getMessaging(), {
+  vapidKey: import.meta.env.VITE_FIREBASE_MESSAGING_VAPID_KEY
+})
+
 export type { User }
 export {
   Timestamp,
   getConverter,
   serverTimestamp,
   signInGoogleWithPopup,
-  signOut
+  signOut,
+  getFcmToken
 }
+
